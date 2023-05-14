@@ -1,30 +1,39 @@
-import os
+from io import BytesIO
 from gtts import gTTS
-import time
 import speech_recognition as sr
 import datetime
 import openai
-from playsound import playsound as play
+from pygame import mixer
 
-openai.api_key = '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'
+openai.api_key = '' # insert your api key here
+
+#messages = [
+#	{"role": "system", "content": "You are a kind helpful assistant like a copilot while i am coding and your name is Gideon. Act like gideon from the flash and help me code."},
+#]
 
 messages = [
-	{"role": "system", "content": "You are a kind helpful assistant."},
+	{"role": "system", "content": "You are a kind helpful assistant like alexa and your name is alexa."}
 ]
 
 def speak(audio):
-	tts = gTTS(audio)
-	tts.save("temp.mp3")
-	time.sleep(2)
-	play("temp.mp3")
-	os.remove("temp.mp3")
+	tts = gTTS(audio, lang='en', tld='co.uk', slow=False)
+	fp = BytesIO()
+	tts.write_to_fp(fp)
+	fp.seek(0)
 
+	mixer.init()
+	mixer.music.load(fp)
+	mixer.music.play()
+	
+	while mixer.music.get_busy():
+		pass
+	mixer.music.unload()
+	
 def listen():
 	r = sr.Recognizer()
 	with sr.Microphone() as mic:
 		print("Listening...")
-		#r.adjust_for_ambient_noise(mic, duration=0.5
-		r.pause_threshold = 1
+		r.adjust_for_ambient_noise(mic, 0.5)
 		audio = r.listen(mic)
 
 	try:
@@ -33,7 +42,7 @@ def listen():
 		print(f"User: {query}")
 
 	except Exception as e:
-		print("Say that again please...")  
+		print("Say that again please...")
 		return "None"
 	return query
 
@@ -56,7 +65,7 @@ if __name__ == "__main__":
 	main()
 	  
 	while True:
-		query = listen()
+		query = input()
 		if query != "None":
 			message = query
 			if message:
@@ -67,6 +76,8 @@ if __name__ == "__main__":
 					model="gpt-3.5-turbo", messages=messages
 				)
 			reply = chat.choices[0].message.content
+			while '`' in reply:
+				reply = reply.replace('`', '')
 			print(f"ChatGPT: {reply}")
 			speak(reply)
 			messages.append({"role": "assistant", "content": reply})
