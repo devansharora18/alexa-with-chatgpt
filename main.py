@@ -65,7 +65,7 @@ if __name__ == "__main__":
 	main()
 	  
 	while True:
-		query = input()
+		query = listen()
 		if query != "None":
 			message = query
 			if message:
