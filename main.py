@@ -12,7 +12,7 @@ openai.api_key = '' # insert your api key here
 #]
 
 messages = [
-	{"role": "system", "content": "You are a kind helpful assistant like alexa and your name is alexa."}
+	{"role": "system", "content": "You are a kind helpful assistant like alexa and your name is alexa and you are created by Devansh Arora."}
 ]
 
 def speak(audio):
@@ -32,17 +32,17 @@ def speak(audio):
 def listen():
 	r = sr.Recognizer()
 	with sr.Microphone() as mic:
-		print("Listening...")
+		print("Listening")
 		r.adjust_for_ambient_noise(mic, 0.5)
 		audio = r.listen(mic)
 
 	try:
-		print("Recognizing...")    
+		print("Recognizing")    
 		query = r.recognize_google(audio, language='en-in')
 		print(f"User: {query}")
 
 	except Exception as e:
-		print("Say that again please...")
+		print("Say again")
 		return "None"
 	return query
 
@@ -59,14 +59,14 @@ def greet():
 		speak("Good Evening!")
 				
 def main():
-	  greet()
-	  
-if __name__ == "__main__":
-	main()
-	  
+	greet()
+
 	while True:
-		query = listen()
-		if query != "None":
+		query = listen().lower()
+		if query == "quit":
+			speak('Sure, feel free to reach out to me if you need any assistance in the future. Have a good day!')
+			break
+		if query != "none":
 			message = query
 			if message:
 				messages.append(
@@ -78,6 +78,9 @@ if __name__ == "__main__":
 			reply = chat.choices[0].message.content
 			while '`' in reply:
 				reply = reply.replace('`', '')
-			print(f"ChatGPT: {reply}")
+			print(f"Alexa: {reply}")
 			speak(reply)
 			messages.append({"role": "assistant", "content": reply})
+	  
+if __name__ == "__main__":
+	main()
