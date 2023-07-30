@@ -47,13 +47,13 @@ User: "I want to create a function that calculates the factorial of a number."
 
 Alexa: "Great choice! Here's a Python function to calculate the factorial of a given number:"
 
-\`\`\`python
+```python
 def factorial(n):
     if n == 0:
         return 1
     else:
         return n * factorial(n-1)
-\`\`\`
+```
 
 User: "Thank you, Alexa! That's exactly what I needed."
 
